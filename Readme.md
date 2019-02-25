@@ -1,4 +1,4 @@
-## PROJECT NAME
+# PROJECT NAME
 Tetris 101
 
 # Team Members
