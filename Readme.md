@@ -1,7 +1,7 @@
 ## PROJECT NAME
 Tetris 101
 
-# team Members
+# Team Members
 - Zhongyang Xia
 - Chengrong Zhang
 - Xuan (Jack) Wei
