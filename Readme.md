@@ -1,5 +1,5 @@
 ## PROJECT NAME
-## Tetris 101
+Tetris 101
 
 # team Members
 - Zhongyang Xia
@@ -29,7 +29,7 @@ Battle Royale Mode, where a number of players compete with each other in the eli
 - Babel/Webpack
 - WebRTC (if time permits)
 
-# a description of our top 5 technical challenges
+# Description of our top 5 technical challenges
 - Two-way synchronization between multiple players using WebSocket
 - Fancy special effects using WebGL
 - Compatibility in multiple browsers
