@@ -35,3 +35,32 @@ Battle Royale Mode, where a number of players compete with each other in the eli
 - Compatibility in multiple browsers
 - Real-time in-memory database read/write
 - Anti-cheating
+# project-plusones
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Run your tests
+```
+npm run test
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
