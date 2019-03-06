@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Matrix v-bind:matrix="matrix" />
+        <Matrix v-bind:matrix="blendedMatrix" />
         <NextTetromino v-bind:tetromino="nextTetromino" />
     </div>
 </template>
@@ -8,6 +8,7 @@
 <script>
 import Matrix from './Matrix.vue'
 import NextTetromino from './NextTetromino.vue'
+import { setTimeout } from 'timers';
 
 export default {
   name: "board",
@@ -43,29 +44,49 @@ export default {
           ]
       ],
       matrix: [],
-      nextTetromino: []
-
+      currentTetromino: [],
+      nextTetromino: [],
+      currentTetrominoX: 0,
+      currentTetrominoY: 0
     }
   },
 
   methods: {
-    initMatrix: function() {
+    initMatrixAndTetrominos: function() {
       for (let row = 0; row < this.HEIGHT; row++) {
           this.matrix.push([])
           for (let column = 0; column < this.WIDTH; column++) {
               this.matrix[row].push(0)
           }
       }
+      this.getNextTetromino()
+      this.getNextTetromino() // run twice to initialize current and next for first time
     },
     getNextTetromino: function() {
+        this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
-        console.log(this.nextTetromino)
+    },
+    softDrop: function() {
+        setTimeout(this.softDrop, 1000)
+        this.currentTetrominoX++
     }
   },
 
+  computed: {
+      blendedMatrix: function() {
+          let blendedMatrix = JSON.parse(JSON.stringify(this.matrix));
+          for (let row=0; row<this.currentTetromino.length; row++) {
+              for (let column=0; column<this.currentTetromino[0].length; column++) {
+                  blendedMatrix[this.currentTetrominoX + row][this.currentTetrominoY + column] = this.currentTetromino[row][column]
+              }
+          }
+          return blendedMatrix;
+      }
+  },
+
   created() {
-    this.initMatrix()
-    this.getNextTetromino()
+    this.initMatrixAndTetrominos()
+    this.softDrop()
   }
 }
 </script>
