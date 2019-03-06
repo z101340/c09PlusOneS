@@ -1,20 +1,50 @@
 <template>
-    <Matrix v-bind:matrix="matrix" v-bind:HEIGHT="HEIGHT" v-bind:WIDTH="WIDTH" />
+    <div>
+        <Matrix v-bind:matrix="matrix" />
+        <NextTetromino v-bind:tetromino="nextTetromino" />
+    </div>
 </template>
 
 <script>
 import Matrix from './Matrix.vue'
+import NextTetromino from './NextTetromino.vue'
 
 export default {
   name: "board",
   components: {
-    Matrix
+    Matrix,
+    NextTetromino
   },
   data() {
     return {
       WIDTH: 10,
       HEIGHT: 20,
-      matrix: []
+      TETROMINOS: [
+          [
+              [1, 1, 1, 1]
+          ],
+          [
+              [1, 1],
+              [1, 1]
+          ],
+          [
+              [1, 0],
+              [1, 0],
+              [1, 1]
+          ],
+          [
+              [1, 0],
+              [1, 1],
+              [0, 1]
+          ],
+          [
+              [1, 1, 1],
+              [0, 1, 0]
+          ]
+      ],
+      matrix: [],
+      nextTetromino: []
+
     }
   },
 
@@ -26,11 +56,16 @@ export default {
               this.matrix[row].push(0)
           }
       }
+    },
+    getNextTetromino: function() {
+        this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
+        console.log(this.nextTetromino)
     }
   },
 
   created() {
     this.initMatrix()
+    this.getNextTetromino()
   }
 }
 </script>

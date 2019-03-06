@@ -1,6 +1,6 @@
 <template>
     <div class="grid-container">
-        <div v-for="row in matrix" class="row">
+        <div v-for="row in tetromino" class="row">
             <div v-for="cell in row" class="cell">
                 {{ cell }}
             </div>
@@ -10,12 +10,10 @@
 
 <script>
 export default {
-    props: [
-        'matrix'
-    ]
+    name: "nextTetromono",
+    props: ['tetromino'],
 }
 </script>
-
 <style scoped>
 .row{
   display: flex;
@@ -26,3 +24,4 @@ export default {
   border: 1px solid black;
 }
 </style>
+
