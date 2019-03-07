@@ -100,9 +100,9 @@ export default {
 
     rotate: function() {
         let rotated = []
-        for (let column = this.currentTetromino[0].length - 1; column >= 0; column--) {
-            for (let row = 0; row < this.currentTetromino.length; row++) {
-                if (row == 0) {
+        for (let column = 0; column < this.currentTetromino[0].length; column++) {
+            for (let row = this.currentTetromino.length - 1; row >=0 ; row--) {
+                if (row == this.currentTetromino.length - 1) {
                     rotated.push([])
                 }
                 rotated[rotated.length - 1].push(this.currentTetromino[row][column])
@@ -140,7 +140,7 @@ export default {
           let blendedMatrix = JSON.parse(JSON.stringify(this.matrix));
           for (let row=0; row<this.currentTetromino.length; row++) {
               for (let column=0; column<this.currentTetromino[0].length; column++) {
-                  blendedMatrix[this.currentTetrominoX + row][this.currentTetrominoY + column] = this.currentTetromino[row][column]
+                  blendedMatrix[this.currentTetrominoX + row][this.currentTetrominoY + column] = this.currentTetromino[row][column] + this.matrix[this.currentTetrominoX + row][this.currentTetrominoY + column]
               }
           }
           return blendedMatrix;
