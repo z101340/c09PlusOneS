@@ -1,6 +1,7 @@
 <template>
     <div>
         <Matrix v-bind:matrix="blendedMatrix" />
+        Next:
         <NextTetromino v-bind:tetromino="nextTetromino" />
     </div>
 </template>
@@ -63,13 +64,75 @@ export default {
       this.getNextTetromino() // run twice to initialize current and next for first time
     },
     getNextTetromino: function() {
+        this.matrix = this.blendedMatrix
         this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
+        this.currentTetrominoX = 0
+        this.currentTetrominoY = 0
     },
     softDrop: function() {
-        setTimeout(this.softDrop, 1000)
-        this.currentTetrominoX++
+        setTimeout(() => {
+            this.softDrop()
+            this.moveDown()
+        }, 1000)
+    },
+    moveLeft: function() {
+        if (this.currentTetrominoY > 0) {
+            this.currentTetrominoY--
+        }
+    },
+    moveRight: function() {
+        if (this.currentTetrominoY < this.WIDTH) {
+            this.currentTetrominoY++
+        }
+    },
+    moveDown: function() {
+        if (this.currentTetrominoX < this.HEIGHT - this.currentTetromino.length) {
+            this.currentTetrominoX++
+        } else {
+            this.getNextTetromino()
+        }
+    },
+    moveSharpDown: function() {
+        this.currentTetrominoX = this.HEIGHT - this.currentTetromino.length
+        this.getNextTetromino()
+    },
+
+    rotate: function() {
+        let rotated = []
+        for (let column = this.currentTetromino[0].length - 1; column >= 0; column--) {
+            for (let row = 0; row < this.currentTetromino.length; row++) {
+                if (row == 0) {
+                    rotated.push([])
+                }
+                rotated[rotated.length - 1].push(this.currentTetromino[row][column])
+            }
+        }
+        this.currentTetromino = rotated
+    },
+
+    bindKeys: function() {
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowLeft':
+                    this.moveLeft()
+                    break
+                case 'ArrowRight':
+                    this.moveRight()
+                    break
+                case 'ArrowDown':
+                    this.moveDown()
+                    break
+                case 'ArrowUp':
+                    this.rotate()
+                    break
+                case ' ':
+                    this.moveSharpDown()
+                    break
+            }
+        })
     }
+
   },
 
   computed: {
@@ -87,6 +150,7 @@ export default {
   created() {
     this.initMatrixAndTetrominos()
     this.softDrop()
+    this.bindKeys()
   }
 }
 </script>
