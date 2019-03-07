@@ -87,14 +87,18 @@ export default {
         }
     },
     moveDown: function() {
-        if (this.currentTetrominoX < this.HEIGHT - this.currentTetromino.length) {
+        if (!this.isCollisionDown) {
             this.currentTetrominoX++
         } else {
             this.getNextTetromino()
         }
     },
     moveSharpDown: function() {
-        this.currentTetrominoX = this.HEIGHT - this.currentTetromino.length
+        // this.currentTetrominoX = this.HEIGHT - this.currentTetromino.length
+        // this.getNextTetromino()
+        while (!this.isCollisionDown) {
+            this.moveDown()
+        }
         this.getNextTetromino()
     },
 
@@ -144,6 +148,21 @@ export default {
               }
           }
           return blendedMatrix;
+      },
+      isCollisionDown: function() {
+          for (let row = 0; row < this.currentTetromino.length; row++) {
+              for (let column = 0; column < this.currentTetromino[0].length; column++) {
+                  if (row + this.currentTetrominoX + 1 == this.HEIGHT) {
+                      return true
+                  }
+                  if (this.currentTetromino[row][column] == 1
+                  && (row == this.currentTetromino.length - 1 || this.currentTetromino[row + 1][column] == 0)
+                  && (this.matrix[this.currentTetrominoX + row+1][this.currentTetrominoY + column] >= 1)) {
+                              return true
+                          }
+                      }
+          }
+          return false
       }
   },
 
