@@ -69,6 +69,25 @@ export default {
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
         this.currentTetrominoX = 0
         this.currentTetrominoY = 0
+        this.reduceFilledRows()
+    },
+    reduceFilledRows: function() {
+        for (let row = 0; row < this.HEIGHT; row++) {
+            let filled = true
+            for (let column = 0; column < this.WIDTH && filled == true; column++) {
+                if (this.matrix[row][column] == 0) {
+                    filled = false
+                }
+            }
+            if (filled) {
+                this.matrix.splice(row, 1)
+                let empty = []
+                for (let i = 0; i < this.WIDTH; i++) {
+                    empty.push(0)
+                }
+                this.matrix.unshift(empty)
+            }
+        }
     },
     softDrop: function() {
         setTimeout(() => {
