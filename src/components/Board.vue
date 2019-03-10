@@ -82,7 +82,7 @@ export default {
         }
     },
     moveRight: function() {
-        if (this.currentTetrominoY < this.WIDTH) {
+        if (!this.isCollisionRight) {
             this.currentTetrominoY++
         }
     },
@@ -154,13 +154,27 @@ export default {
               for (let column = 0; column < this.currentTetromino[0].length; column++) {
                   if (row + this.currentTetrominoX + 1 == this.HEIGHT) {
                       return true
-                  }
-                  if (this.currentTetromino[row][column] == 1
+                  } else if (this.currentTetromino[row][column] == 1
                   && (row == this.currentTetromino.length - 1 || this.currentTetromino[row + 1][column] == 0)
-                  && (this.matrix[this.currentTetrominoX + row+1][this.currentTetrominoY + column] >= 1)) {
+                  && (this.matrix[this.currentTetrominoX + row + 1][this.currentTetrominoY + column] >= 1)) {
                               return true
                           }
                       }
+          }
+          return false
+      },
+
+      isCollisionRight: function() {
+          for (let row = 0; row < this.currentTetromino.length; row++) {
+              for (let column = 0; column < this.currentTetromino[0].length; column++) {
+                  if (column + this.currentTetrominoY + 1 == this.WIDTH) {
+                      return true
+                  } else if (this.currentTetromino[row][column] == 1
+                  && (column == this.currentTetromino[0].length - 1 || this.currentTetromino[row][column + 1] == 0)
+                  && (this.matrix[this.currentTetrominoX + row][this.currentTetrominoY + column + 1] >= 1)) {
+                      return true
+                  }
+              }
           }
           return false
       }
