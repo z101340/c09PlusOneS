@@ -77,7 +77,7 @@ export default {
         }, 1000)
     },
     moveLeft: function() {
-        if (this.currentTetrominoY > 0) {
+        if (!this.isCollisionLeft) {
             this.currentTetrominoY--
         }
     },
@@ -172,6 +172,21 @@ export default {
                   } else if (this.currentTetromino[row][column] == 1
                   && (column == this.currentTetromino[0].length - 1 || this.currentTetromino[row][column + 1] == 0)
                   && (this.matrix[this.currentTetrominoX + row][this.currentTetrominoY + column + 1] >= 1)) {
+                      return true
+                  }
+              }
+          }
+          return false
+      },
+
+      isCollisionLeft: function() {
+          for (let row = 0; row < this.currentTetromino.length; row++) {
+              for (let column = 0; column < this.currentTetromino[0].length; column++) {
+                  if (this.currentTetrominoY == 0) {
+                      return true
+                  } else if (this.currentTetromino[row][column] == 1
+                  && (column == 0 || this.currentTetromino[row][column - 1] == 0)
+                  && (this.matrix[this.currentTetrominoX + row][this.currentTetrominoY + column - 1] >= 1)) {
                       return true
                   }
               }
