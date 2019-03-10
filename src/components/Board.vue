@@ -54,22 +54,40 @@ export default {
 
   methods: {
     initMatrixAndTetrominos: function() {
+      let matrix = []
       for (let row = 0; row < this.HEIGHT; row++) {
-          this.matrix.push([])
+          matrix.push([])
           for (let column = 0; column < this.WIDTH; column++) {
-              this.matrix[row].push(0)
+              matrix[row].push(0)
           }
       }
-      this.getNextTetromino()
-      this.getNextTetromino() // run twice to initialize current and next for first time
+      this.matrix = matrix
+      this.getNextTetromino(true)
+      this.getNextTetromino(true) // run twice to initialize current and next for first time
     },
-    getNextTetromino: function() {
-        this.matrix = this.blendedMatrix
+    getNextTetromino: function(init) {
+        if (init == false) {
+            this.matrix = this.blendedMatrix
+        }
         this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
         this.currentTetrominoX = 0
-        this.currentTetrominoY = 0
+        this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1)
         this.reduceFilledRows()
+        this.deathDetection()
+    },
+    deathDetection: function() {
+        const row = 0
+        for (let column = 0; column < this.WIDTH; column++) {
+            if (this.matrix[row][column] > 1) {
+                // dead
+                this.die()
+            }
+        }
+    },
+    die: function() {
+        alert("you died")
+        this.initMatrixAndTetrominos()
     },
     reduceFilledRows: function() {
         for (let row = 0; row < this.HEIGHT; row++) {
@@ -109,7 +127,7 @@ export default {
         if (!this.isCollisionDown) {
             this.currentTetrominoX++
         } else {
-            this.getNextTetromino()
+            this.getNextTetromino(false)
         }
     },
     moveSharpDown: function() {
@@ -118,7 +136,7 @@ export default {
         while (!this.isCollisionDown) {
             this.moveDown()
         }
-        this.getNextTetromino()
+        this.getNextTetromino(false)
     },
 
     rotate: function() {
