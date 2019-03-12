@@ -149,7 +149,9 @@ export default {
                 rotated[rotated.length - 1].push(this.currentTetromino[row][column])
             }
         }
-        this.currentTetromino = rotated
+        if(this.currentTetrominoY + rotated[0].length < this.WIDTH + 1){
+            this.currentTetromino = rotated;
+        }
     },
 
     bindKeys: function() {
