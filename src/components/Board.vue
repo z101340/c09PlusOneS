@@ -1,21 +1,28 @@
 <template>
-    <div>
+    <div class="board">
         <Matrix v-bind:matrix="blendedMatrix" />
         Next:
         <NextTetromino v-bind:tetromino="nextTetromino" />
+        Hold:
+        <HoldTetromino v-bind:tetromino="holdTetromino" />
+        <ScoreBoard v-bind:score="score" />
     </div>
 </template>
 
 <script>
-import Matrix from './Matrix.vue'
-import NextTetromino from './NextTetromino.vue'
+import Matrix from './Matrix.vue';
+import NextTetromino from './NextTetromino.vue';
 import { setTimeout } from 'timers';
+import ScoreBoard from './ScoreBoard.vue';
+import HoldTetromino from './HoldTetromino.vue';
 
 export default {
   name: "board",
   components: {
     Matrix,
-    NextTetromino
+    NextTetromino,
+    ScoreBoard,
+    HoldTetromino
   },
   data() {
     return {
@@ -30,6 +37,11 @@ export default {
               [1, 1]
           ],
           [
+              [0, 1],
+              [0, 1],
+              [1, 1]
+          ],
+          [
               [1, 0],
               [1, 0],
               [1, 1]
@@ -40,6 +52,11 @@ export default {
               [0, 1]
           ],
           [
+              [0, 1],
+              [1, 1],
+              [1, 0]
+          ],
+          [
               [1, 1, 1],
               [0, 1, 0]
           ]
@@ -47,8 +64,10 @@ export default {
       matrix: [],
       currentTetromino: [],
       nextTetromino: [],
+      holdTetromino: [],
       currentTetrominoX: 0,
-      currentTetrominoY: 0
+      currentTetrominoY: 0,
+      score:0
     }
   },
 
@@ -61,6 +80,7 @@ export default {
               matrix[row].push(0)
           }
       }
+      this.score = 0;
       this.matrix = matrix
       this.getNextTetromino(true)
       this.getNextTetromino(true) // run twice to initialize current and next for first time
@@ -69,6 +89,7 @@ export default {
         if (init == false) {
             this.matrix = this.blendedMatrix
         }
+
         this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
         this.currentTetrominoX = 0
@@ -104,8 +125,10 @@ export default {
                     empty.push(0)
                 }
                 this.matrix.unshift(empty)
+                this.score ++;
             }
         }
+
     },
     softDrop: function() {
         setTimeout(() => {
@@ -138,7 +161,23 @@ export default {
         }
         this.getNextTetromino(false)
     },
+    HoldTetro: function() {
 
+        this.holdTetromino = this.currentTetromino;
+        this.currentTetromino = [];
+        this.getNextTetromino(false);
+
+    },
+    ReleaseTetro: function() {
+
+        this.currentTetromino = this.holdTetromino;
+        this.holdTetromino = [];
+        this.currentTetrominoX = 0;
+        this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1);
+        this.reduceFilledRows();
+        this.deathDetection();
+
+    },
     rotate: function() {
         let rotated = []
         for (let column = 0; column < this.currentTetromino[0].length; column++) {
@@ -153,7 +192,6 @@ export default {
             this.currentTetromino = rotated;
         }
     },
-
     bindKeys: function() {
         document.addEventListener('keydown', (e) => {
             switch (e.key) {
@@ -171,6 +209,12 @@ export default {
                     break
                 case ' ':
                     this.moveSharpDown()
+                    break
+                case 'h':
+                    this.HoldTetro()
+                    break
+                case 'r':
+                    this.ReleaseTetro()
                     break
             }
         })
@@ -241,3 +285,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.board{
+    text-align: left
+}
+</style>
