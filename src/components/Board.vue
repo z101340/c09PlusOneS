@@ -176,13 +176,15 @@ export default {
             this.getNextTetromino(false);
         }
         else{
-            console.log("can't hold another")
+            this.ReleaseTetro();
         }
     },
     ReleaseTetro: function() {
         if(this.holdTetromino.length != 0){
+            let temp = [];
+            temp = this.currentTetromino;
             this.currentTetromino = this.holdTetromino;
-            this.holdTetromino = [];
+            this.holdTetromino = temp;
             this.currentTetrominoX = 0;
             this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1);
             this.reduceFilledRows();
@@ -227,9 +229,9 @@ export default {
                 case 'h':
                     this.HoldTetro()
                     break
-                case 'r':
-                    this.ReleaseTetro()
-                    break
+                // case 'r':
+                //     this.ReleaseTetro()
+                //     break
             }
         })
     }
