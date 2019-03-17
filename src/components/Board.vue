@@ -168,21 +168,27 @@ export default {
         this.getNextTetromino(false)
     },
     HoldTetro: function() {
-
-        this.holdTetromino = this.currentTetromino;
-        this.currentTetromino = [];
-        this.getNextTetromino(false);
-
+        if(this.holdTetromino.length == 0){
+            this.holdTetromino = this.currentTetromino;
+            this.currentTetromino = [];
+            this.getNextTetromino(false);
+        }
+        else{
+            console.log("can't hold another")
+        }
     },
     ReleaseTetro: function() {
-
-        this.currentTetromino = this.holdTetromino;
-        this.holdTetromino = [];
-        this.currentTetrominoX = 0;
-        this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1);
-        this.reduceFilledRows();
-        this.deathDetection();
-
+        if(this.holdTetromino.length != 0){
+            this.currentTetromino = this.holdTetromino;
+            this.holdTetromino = [];
+            this.currentTetrominoX = 0;
+            this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1);
+            this.reduceFilledRows();
+            this.deathDetection();
+        }
+        else{
+            console.log("can't release empty");
+        }
     },
     rotate: function() {
         let rotated = []
