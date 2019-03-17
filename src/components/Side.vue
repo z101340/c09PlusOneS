@@ -43,10 +43,7 @@ export default {
 </script>
 
 <style scoped>
-.next {
-    min-height: 30vh;
-}
-.next > .card-content {
+.card > .card-content {
     margin: auto;
 }
 </style>
