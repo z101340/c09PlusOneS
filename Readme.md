@@ -64,7 +64,7 @@ npm run lint
 
 ### Live Demo Address
 ```
-(http://tetris.mechanus.io/)
+[Live Demo](http://tetris.mechanus.io/)
 ```
 
 ### Customize configuration
