@@ -26,7 +26,6 @@ export default {
 .row div{
   width: 20px;
   height: 20px;
-  border: 1px solid black;
 }
 </style>
 

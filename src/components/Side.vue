@@ -8,7 +8,15 @@
             </header>
             <NextTetromino class="card-content" v-bind:tetromino="nextTetromino" />
         </div>
-        <div class="card">
+        <div class="card hold">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Hold
+                </p>
+            </header>
+            <NextTetromino class="card-content" v-bind:tetromino="holdTetromino" />
+        </div>
+        <div class="card Score">
             <header class="card-header">
                 <p class="card-header-title">
                     Score
@@ -23,11 +31,13 @@
 
 <script>
 import NextTetromino from './NextTetromino.vue'
+import HoldTetromino from './HoldTetromino.vue'
 export default {
     name: "side",
-    props: ['nextTetromino', 'score'],
+    props: ['nextTetromino','holdTetromino', 'score'],
     components: {
-        NextTetromino
+        NextTetromino,
+        HoldTetromino
     },
 }
 </script>

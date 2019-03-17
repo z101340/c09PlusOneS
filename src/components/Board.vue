@@ -3,7 +3,7 @@
         <div class="box columns">
             <Matrix class="column" v-bind:matrix="blendedMatrix" />
             <div class="column">
-                <Side class="is-vertical-center" v-bind:nextTetromino="nextTetromino" v-bind:score="score" />
+                <Side class="is-vertical-center" v-bind:nextTetromino="nextTetromino" v-bind:holdTetromino="holdTetromino" v-bind:score="score" />
             </div>
         </div>
     </div>
