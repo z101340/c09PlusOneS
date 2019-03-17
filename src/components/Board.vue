@@ -10,6 +10,7 @@
 </template>
 
 <script>
+
 import Matrix from './Matrix.vue';
 import NextTetromino from './NextTetromino.vue';
 import { setTimeout } from 'timers';
@@ -22,12 +23,13 @@ export default {
     Matrix,
     NextTetromino,
     ScoreBoard,
-    HoldTetromino
+    HoldTetromino,
   },
   data() {
     return {
       WIDTH: 10,
       HEIGHT: 20,
+      score: 0,
       TETROMINOS: [
           [
               [1, 1, 1, 1]
@@ -125,10 +127,14 @@ export default {
                     empty.push(0)
                 }
                 this.matrix.unshift(empty)
-                this.score ++;
+                this.lineClearActions();
             }
         }
 
+    },
+    lineClearActions: function() {
+        // executed after line clear
+        this.score++
     },
     softDrop: function() {
         setTimeout(() => {
