@@ -1,8 +1,22 @@
 <template>
     <div>
-        <NextTetromino v-bind:tetromino="nextTetromino" />
-        <div>
-            {{ score }}
+        <div class="card next">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Next
+                </p>
+            </header>
+            <NextTetromino class="card-content" v-bind:tetromino="nextTetromino" />
+        </div>
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    Score
+                </p>
+            </header>
+            <div class="card-content">
+                {{ score }}
+            </div>
         </div>
     </div>
 </template>
@@ -17,3 +31,12 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.next {
+    min-height: 30vh;
+}
+.next > .card-content {
+    margin: auto;
+}
+</style>

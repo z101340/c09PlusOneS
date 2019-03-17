@@ -1,7 +1,11 @@
 <template>
-    <div>
-        <Matrix v-bind:matrix="blendedMatrix" />
-        <Side v-bind:nextTetromino="nextTetromino" v-bind:score="score" />
+    <div class="board">
+        <div class="box columns">
+            <Matrix class="column" v-bind:matrix="blendedMatrix" />
+            <div class="column">
+                <Side class="is-vertical-center" v-bind:nextTetromino="nextTetromino" v-bind:score="score" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -246,3 +250,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.board {
+    margin: auto;
+    width: fit-content;
+    min-width: 50%;
+}
+</style>
