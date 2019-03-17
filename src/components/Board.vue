@@ -1,26 +1,26 @@
 <template>
     <div>
         <Matrix v-bind:matrix="blendedMatrix" />
-        Next:
-        <NextTetromino v-bind:tetromino="nextTetromino" />
+        <Side v-bind:nextTetromino="nextTetromino" v-bind:score="score" />
     </div>
 </template>
 
 <script>
 import Matrix from './Matrix.vue'
-import NextTetromino from './NextTetromino.vue'
+import Side from './Side.vue'
 import { setTimeout } from 'timers';
 
 export default {
   name: "board",
   components: {
     Matrix,
-    NextTetromino
+    Side
   },
   data() {
     return {
       WIDTH: 10,
       HEIGHT: 20,
+      score: 0,
       TETROMINOS: [
           [
               [1, 1, 1, 1]
@@ -104,8 +104,13 @@ export default {
                     empty.push(0)
                 }
                 this.matrix.unshift(empty)
+                this.lineClearActions()
             }
         }
+    },
+    lineClearActions: function() {
+        // executed after line clear
+        this.score++
     },
     softDrop: function() {
         setTimeout(() => {
