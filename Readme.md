@@ -63,9 +63,9 @@ npm run lint
 ```
 
 ### Live Demo Address
-```
+
 [Live Demo](http://tetris.mechanus.io/)
-```
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
