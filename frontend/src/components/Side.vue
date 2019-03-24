@@ -31,13 +31,11 @@
 
 <script>
 import NextTetromino from './NextTetromino.vue'
-import HoldTetromino from './HoldTetromino.vue'
 export default {
     name: "side",
     props: ['nextTetromino','holdTetromino', 'score'],
     components: {
         NextTetromino,
-        HoldTetromino
     },
 }
 </script>

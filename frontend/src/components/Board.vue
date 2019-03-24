@@ -13,10 +13,8 @@
 
 import Matrix from './Matrix.vue';
 import Side from './Side.vue'
-import NextTetromino from './NextTetromino.vue';
 import { setTimeout } from 'timers';
 import ScoreBoard from './ScoreBoard.vue';
-import HoldTetromino from './HoldTetromino.vue';
 
 export default {
   name: "board",
