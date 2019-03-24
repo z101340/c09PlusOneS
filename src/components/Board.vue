@@ -22,10 +22,7 @@ export default {
   name: "board",
   components: {
     Side,
-    Matrix,
-    NextTetromino,
-    ScoreBoard,
-    HoldTetromino,
+    Matrix
   },
   data() {
     return {
@@ -70,8 +67,7 @@ export default {
       nextTetromino: [],
       holdTetromino: [],
       currentTetrominoX: 0,
-      currentTetrominoY: 0,
-      score:0
+      currentTetrominoY: 0
     }
   },
 
@@ -189,9 +185,6 @@ export default {
             this.currentTetrominoY = Math.floor(this.WIDTH / 2 - 1);
             this.reduceFilledRows();
             this.deathDetection();
-        }
-        else{
-            console.log("can't release empty");
         }
     },
     rotate: function() {
