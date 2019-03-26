@@ -7,3 +7,4 @@
         <a class="button is-primary is-rounded">Start a new game</a>
     </div>
 </template>
+
