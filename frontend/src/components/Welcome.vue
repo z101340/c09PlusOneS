@@ -10,15 +10,8 @@
 </template>
 
 <script>
-import { error } from 'util'
-import { constants } from 'fs';
 export default {
     name: "Welcome",
-    data() {
-        return{
-            players: []
-        }
-    },
     methods: {
         startNewGame: function() {
             fetch('//localhost:3000/api/newgame', {
