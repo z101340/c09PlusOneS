@@ -3,11 +3,14 @@
 const express = require('express');
 const app = new express();
 
+const cors = require("cors");
+
 const port = 3000;
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
+app.use(cors());
 
 const {MongoClient, ObjectId} = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
@@ -65,14 +68,16 @@ app.post('/api/joingame', function (req, res) {
                 if (err) {
                     console.log(err);
                     res.status(500).json({success: false, err});
-                } else {
+                } else if (dbRes.matchedCount == 1) {
                     res.json({success: true, result: dbRes.result});
+                } else {
+                    res.status(500).json({success: false, err: "no game matched"});
                 }
             });
         }
     });
 });
 
-app.listen(8000, () => {
+app.listen(port, () => {
     console.log("server started");
 });
