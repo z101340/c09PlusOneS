@@ -61,7 +61,7 @@ app.post('/api/game', (req, res) => {
     });
 });
 
-app.post('/api/game/:id', function (req, res) {
+app.get('/api/game/:id', function (req, res) {
     const id = req.params.id;
     MongoClient.connect(mongoUrl, function (err, db) {
         if (err) {
@@ -76,20 +76,24 @@ app.post('/api/game/:id', function (req, res) {
                     console.log(err);
                     res.status(500).json({ success: false, err });
                 }else if (dbRes) {
-                    let you = {};
-                    let opponent = {};
+                    let result = {};
                     if (req.sessionID == dbRes.hostSid) {
+                        result = {
                         // client is host
-                        you = dbRes.host;
-                        opponent = dbRes.guest;
+                            you: dbRes.host,
+                            opponent: dbRes.guest,
+                            isHost: true
+                        };
                     } else {
+                        result = {
+                            opponent: dbRes.host,
+                            you: dbRes.guest,
+                            isHost: false
+                        };
                         you = dbRes.guest;
                         opponent = dbRes.host;
                     }
-                    res.json({ success: true, result: {
-                        you,
-                        opponent
-                    } });
+                    res.json({ success: true, result });
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
