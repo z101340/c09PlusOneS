@@ -1,20 +1,13 @@
 <template>
   <div id="app">
-    <!-- <Board /> -->
-    <Welcome />
+    <router-view />
   </div>
 </template>
 
 <script>
-// import Board from './components/Board.vue'
-import Welcome from './components/Welcome.vue'
 
 export default {
   name: 'app',
-  components: {
-    // Board
-    Welcome
-  }
 }
 </script>
 
