@@ -12,6 +12,11 @@
 <script>
 export default {
     name: "Welcome",
+    data(){
+        return{
+            players
+        }
+    },
     methods: {
         startNewGame: function() {
             fetch('//localhost:3000/api/newgame', {
@@ -21,7 +26,6 @@ export default {
             .then((response) => {
                 if (response.success) {
                     const id = response.id;
-
                 } else {
                     console.error(response)
                 }
@@ -32,12 +36,17 @@ export default {
 
         joinNewGame: function(roomNumber) {
             fetch('//localhost:3000/api/joingame', {
-                method: 'POST'
+                method: 'POST',
+                body: {
+                    id: roomNumber
+                }  
+            }).then((res) => res.json())
+            .then((data) =>{
+                console.log(data)
             })
-            .then((res) => res.json())
-            .then((data) => console.log(data))
-            .catch((error)=> console.log(error))
-        }
+            .catch((error)=> {
+                console.log(error)
+        });
     }
 }
 </script>

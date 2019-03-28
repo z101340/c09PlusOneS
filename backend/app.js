@@ -5,15 +5,24 @@ const app = new express();
 
 const cors = require("cors");
 
+const expressWs = require('express-ws')(app);
+const morgan = require('morgan');
+
+
 const port = 3000;
 
 const bodyParser = require('body-parser');
+
+app.use(express.static('static'));
+app.use(morgan('dev'));
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(cors());
 
 const {MongoClient, ObjectId} = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
+
+var connects = [];
 
 class Player  {
     constructor() {
@@ -76,6 +85,24 @@ app.post('/api/joingame', function (req, res) {
             });
         }
     });
+});
+
+app.ws('/api/chat', function(ws, req) {
+  
+    connects.push(ws);
+  
+    ws.on('message', function(message) {
+        console.log('Received -', message);
+        connects.forEach(socket => {
+            socket.send(message);
+        });
+    });
+
+    ws.on('close', function(){
+      connects = connects.filter(conn => {
+        return (conn === ws) ? false : true;
+      });
+    }); 
 });
 
 app.listen(port, () => {
