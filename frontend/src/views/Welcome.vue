@@ -21,7 +21,12 @@ export default {
             .then((response) => {
                 if (response.success) {
                     const id = response.id;
-                    console.log(id)
+                    this.$router.push({
+                        name: 'game',
+                        params: {
+                            id
+                        }
+                    })
                 } else {
                     console.error(response)
                 }
