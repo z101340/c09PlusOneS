@@ -24,9 +24,23 @@ app.use(session({
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
 
+class Matrix {
+    constructor(width, height) {
+        let matrix = [];
+        for (let rowCount = 0; rowCount < height; rowCount++) {
+            let row = [];
+            for (let columnCount = 0; columnCount < width; columnCount++) {
+                row.push(0);
+            }
+            matrix.push(row);
+        }
+        this.matrix = matrix;
+    }
+}
+
 class Player  {
     constructor() {
-        this.matrix = [];
+        this.matrix = new Matrix(10, 20);
         this.score = 0;
         this.sid = '';
     }
