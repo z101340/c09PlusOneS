@@ -12,7 +12,10 @@ const port = 3000;
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8080',
+    credentials: true
+}));
 
 app.use(session({
     secret: 'keyboard cat',

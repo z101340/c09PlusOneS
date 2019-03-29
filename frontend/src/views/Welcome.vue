@@ -16,7 +16,7 @@ export default {
         startNewGame: function() {
             fetch('//localhost:3000/api/game', {
                 method: 'POST',
-                // mode: 'no-cors'
+                credentials: 'include'
             }).then(res => res.json())
             .then((response) => {
                 if (response.success) {
