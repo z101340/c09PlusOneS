@@ -8,6 +8,7 @@ const cors = require("cors");
 const expressWs = require('express-ws')(app);
 const morgan = require('morgan');
 
+const session = require('express-session');
 
 const port = 3000;
 
@@ -17,31 +18,51 @@ app.use(express.static('static'));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:8080',
+    credentials: true
+}));
 
-const {MongoClient, ObjectId} = require("mongodb");
+app.use(session({
+    secret: 'keyboard cat',
+}));
+
+const { MongoClient, ObjectId } = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
 
-var connects = [];
-
-class Player  {
-    constructor() {
-        this.matrix = [];
-        this.score = 0;
+class Matrix {
+    constructor(width, height) {
+        let matrix = [];
+        for (let rowCount = 0; rowCount < height; rowCount++) {
+            let row = [];
+            for (let columnCount = 0; columnCount < width; columnCount++) {
+                row.push(0);
+            }
+            matrix.push(row);
+        }
+        this.matrix = matrix;
     }
 }
 
-app.post('/api/newgame', (req, res) => {
-    MongoClient.connect(mongoUrl, function(err, db) {
+class Player  {
+    constructor() {
+        this.matrix = new Matrix(10, 20);
+        this.score = 0;
+        this.sid = '';
+    }
+}
+
+app.post('/api/game', (req, res) => {
+    MongoClient.connect(mongoUrl, function (err, db) {
         if (err) {
             console.error(err);
             res.status(500).json(err);
         } else {
             const dbo = db.db("tetris");
             const emptyGame = {
-                starter: new Player(),
-                opponent: new Player(),
-                isFilled: false
+                host: new Player(),
+                guest: new Player(),
+                hostSid: req.sessionID,
             };
 
             dbo.collection("games").insertOne(emptyGame, function(err, dbRes) {
@@ -63,24 +84,41 @@ app.post('/api/newgame', (req, res) => {
     });
 });
 
-app.post('/api/joingame', function (req, res) {
-    const id = req.body.id;
-    MongoClient.connect(mongoUrl, function(err, db) {
+app.get('/api/game/:id', function (req, res) {
+    const id = req.params.id;
+    MongoClient.connect(mongoUrl, function (err, db) {
         if (err) {
             console.log(err);
-            res.status(500).json({success: false, err});
+            res.status(500).json({ success: false, err });
         } else if (!ObjectId.isValid(id)) {
-            res.status(422).json({success: false, err: "bad id input"});
+            res.status(422).json({ success: false, err: "bad id input" });
         } else {
             const dbo = db.db("tetris");
-            dbo.collection("games").updateOne({_id: new ObjectId(id), isFilled: false}, {$set: { isFilled: true}}, function (err, dbRes) {
+            dbo.collection("games").findOne({ _id: new ObjectId(id) }, function (err, dbRes) {
                 if (err) {
                     console.log(err);
-                    res.status(500).json({success: false, err});
-                } else if (dbRes.matchedCount == 1) {
-                    res.json({success: true, result: dbRes.result});
+                    res.status(500).json({ success: false, err });
+                }else if (dbRes) {
+                    let result = {};
+                    if (req.sessionID == dbRes.hostSid) {
+                        result = {
+                        // client is host
+                            you: dbRes.host,
+                            opponent: dbRes.guest,
+                            isHost: true
+                        };
+                    } else {
+                        result = {
+                            opponent: dbRes.host,
+                            you: dbRes.guest,
+                            isHost: false
+                        };
+                        you = dbRes.guest;
+                        opponent = dbRes.host;
+                    }
+                    res.json({ success: true, result });
                 } else {
-                    res.status(500).json({success: false, err: "no game matched"});
+                    res.status(500).json({ success: false, err: "no game matched" });
                 }
             });
         }
@@ -88,9 +126,7 @@ app.post('/api/joingame', function (req, res) {
 });
 
 app.ws('/api/chat', function(ws, req) {
-  
     connects.push(ws);
-  
     ws.on('message', function(message) {
         console.log('Received -', message);
         connects.forEach(socket => {

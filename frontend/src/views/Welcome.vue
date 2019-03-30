@@ -3,9 +3,9 @@
         <h1 class="title is-1">
             Tetris!
         </h1>
-        <h4 class="subtitle is-4">Start a new game or join an existing game using given links</h4>
+        <h3 class="subtitle is-3">Start a new game or join an existing game using given links</h3>
+        <h4 class="subtitle is-4">Share an exising game by sharing the link</h4>
         <a class="button is-primary is-rounded" v-on:click="startNewGame">Start a new game</a>
-        <input v-model="roomNumber" v-on:keyup.13="joinNewGame(roomNumber)" placeholder="enter the room number"/>
     </div>
 </template>
 
@@ -19,34 +19,26 @@ export default {
     },
     methods: {
         startNewGame: function() {
-            fetch('//localhost:3000/api/newgame', {
+            fetch('//localhost:3000/api/game', {
                 method: 'POST',
-                // mode: 'no-cors'
+                credentials: 'include'
             }).then(res => res.json())
             .then((response) => {
                 if (response.success) {
                     const id = response.id;
+                    this.$router.push({
+                        name: 'game',
+                        params: {
+                            id
+                        }
+                    })
                 } else {
                     console.error(response)
                 }
             }).catch((error) => {
                 console.error(error)
             })
-        },
-
-        joinNewGame: function(roomNumber) {
-            fetch('//localhost:3000/api/joingame', {
-                method: 'POST',
-                body: {
-                    id: roomNumber
-                }  
-            }).then((res) => res.json())
-            .then((data) =>{
-                console.log(data)
-            })
-            .catch((error)=> {
-                console.log(error)
-        });
+        }
     }
 }
 </script>
