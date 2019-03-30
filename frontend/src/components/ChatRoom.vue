@@ -1,6 +1,7 @@
 <template>
     <div>
-        <textarea v-model="message" placeholder="inputmessage"></textarea>
+        <div class="message">{{msg}}</div>
+        <textarea v-model="text" placeholder="inputmessage"></textarea>
     </div>
 </template>
 
@@ -16,9 +17,9 @@ export default {
         },
 
         sendMessage(){
-            var text = vm.message;
+            var text = vm.text;
             ws.send(text);
-            vm.message = '';
+            vm.text = '';
         },
 
         reciveMessage(){
