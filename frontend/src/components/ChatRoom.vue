@@ -23,8 +23,9 @@ export default {
         },
 
         reciveMessage(){
-            ws.onmessage = function(msg) {
-                var response = msg.data;
+            ws.onmessage = function(res) {
+                var response = res.data;
+                this.msg = res;
             }
         }
 
