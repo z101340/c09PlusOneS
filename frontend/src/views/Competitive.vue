@@ -3,7 +3,10 @@
         {{ id }}
         <div class="columns board">
             <div class="column gamepad">
-                <Board v-if="hasStarted" v-on:matrix-changed="updateMatrix" />
+                <Board v-if="hasStarted"
+                    v-on:matrix-changed="updateMatrix"
+                    v-bind:initialMatrix="me.matrix"
+                    v-bind:initialScore="me.score" />
             </div>
             <div class="column gamepad">
                 <BoardLimited v-if="hasStarted" 
@@ -29,6 +32,7 @@ export default {
     data() {
         return {
             opponent: {},
+            me: {},
             hasStarted: false,
             ws: new WebSocket("ws://localhost:3000/api/game/" +this.$route.params.id + "/ws")
         }
@@ -58,18 +62,15 @@ export default {
                 this.opponent = {
                     matrix: data.matrix,
                     score: data.score,
-                    hold: data.hold,
-                    next: data.next
                 }
             }
         }
     },
     methods: {
         setupGame: function (gameInfo) {
-            const me = gameInfo.players.you;
+            this.me = gameInfo.players.you;
             const opponent = gameInfo.players.opponent;
 
-            this.opponent
             this.hasStarted = gameInfo.hasStarted
 
             if (!gameInfo.isHost && !this.hasStarted) {
@@ -85,6 +86,7 @@ export default {
                     }
                 })
             }
+
         },
         updateMatrix: function(pack) {
             const {matrix, score, hold, next} = pack;

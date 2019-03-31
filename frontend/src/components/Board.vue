@@ -18,6 +18,7 @@ import ScoreBoard from './ScoreBoard.vue';
 
 export default {
   name: "board",
+  props: ['initialMatrix', 'initialScore'],
   components: {
     Side,
     Matrix
@@ -26,7 +27,7 @@ export default {
     return {
       WIDTH: 10,
       HEIGHT: 20,
-      score: 0,
+    //   score: 0,
       TETROMINOS: [
           [
               [1, 1, 1, 1]
@@ -60,26 +61,28 @@ export default {
               [0, 1, 0]
           ]
       ],
-      matrix: [],
+    //   matrix: [],
       currentTetromino: [],
       nextTetromino: [],
       holdTetromino: [],
       currentTetrominoX: 0,
-      currentTetrominoY: 0
+      currentTetrominoY: 0,
+      matrix: this.initialMatrix,
+      score: this.initialScore
     }
   },
 
   methods: {
     initMatrixAndTetrominos: function() {
-      let matrix = []
-      for (let row = 0; row < this.HEIGHT; row++) {
-          matrix.push([])
-          for (let column = 0; column < this.WIDTH; column++) {
-              matrix[row].push(0)
-          }
-      }
-      this.score = 0;
-      this.matrix = matrix
+    //   let matrix = []
+    //   for (let row = 0; row < this.HEIGHT; row++) {
+    //       matrix.push([])
+    //       for (let column = 0; column < this.WIDTH; column++) {
+    //           matrix[row].push(0)
+    //       }
+    //   }
+    //   this.score = 0;
+    //   this.matrix = matrix
       this.getNextTetromino(true)
       this.getNextTetromino(true) // run twice to initialize current and next for first time
     },
@@ -290,7 +293,8 @@ export default {
       }
   },
 
-  created() {
+  mounted() {
+      console.log(this.initialMatrix)
     this.initMatrixAndTetrominos()
     this.softDrop()
     this.bindKeys()
