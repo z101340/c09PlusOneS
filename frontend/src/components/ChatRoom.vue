@@ -1,7 +1,7 @@
 <template>
     <div class = "box">
         <div class="rows is-multiline is-mobile">
-            <div class="row is-half is-narrow" v-for="message in messages">{{message}}</div>
+            <div class="row is-half is-narrow has-cell-border" v-for="message in messages">{{message}}</div>
         </div>
         <input v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg" class="input is-large is-hovered">
         <a class="button is-primary is-large" v-on:click="sendMessage(textMsg)">send</a>
@@ -61,14 +61,23 @@ export default {
     margin: auto;
     width: fit-content;
     min-width: 50%;
+    padding-right: 10px;
 }
 .row{
     margin: auto;
     text-align: left;
     width:40%;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    border-color: grey;
+    border-radius: 16px;
 }
 .box{
     margin: auto;
-    width:80%
+    width:60%
 }
 </style>
