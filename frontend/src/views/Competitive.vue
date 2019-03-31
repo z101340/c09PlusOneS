@@ -62,6 +62,8 @@ export default {
                 this.opponent = {
                     matrix: data.matrix,
                     score: data.score,
+                    next: data.next,
+                    hold: data.hold
                 }
             }
         }

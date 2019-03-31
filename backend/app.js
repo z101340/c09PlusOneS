@@ -169,10 +169,12 @@ app.patch('/api/game/:id', function (req, res) {
                     };
                     res.json({ success: true, result });
                     // inform the host
-                    console.log(wsGames);
-                    wsGames[id].host.send(JSON.stringify({
-                        method: "guestJoined",
-                    }));
+                    const tell = wsGames[id].host;
+                    if (tell && tell.readyState == 1) {
+                        tell.send(JSON.stringify({
+                            method: "guestJoined",
+                        }));
+                    }
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
@@ -198,12 +200,11 @@ app.ws('/api/game/:id/ws', function(ws, req) {
             req.session[id] = { isHost: false };
         }
     }
-    console.log(id);
 
 
     MongoClient.connect(mongoUrl, function (err, db) {
         if (!err && ObjectId.isValid(id)) {
-        const dbo = db.db("tetris");
+            const dbo = db.db("tetris");
             dbo.collection("games").findOne({ _id: new ObjectId(id) }, function (err, dbRes) {
             });
         }
@@ -222,15 +223,17 @@ app.ws('/api/game/:id/ws', function(ws, req) {
                     const dbo = db.db("tetris");
                     let update = { $set: {} };
                     update.$set[player] = { matrix, score };
-                    dbo.collection("games").findOneAndUpdate({_id: new ObjectId(id)}, update, function(err, res) {
+                    dbo.collection("games").findOneAndUpdate({ _id: new ObjectId(id) }, update, function (err, res) {
                         const otherPlayer = isHost ? "guest" : "host";
-                        wsGames[id][otherPlayer].send(JSON.stringify({
-                            method: "updateOpponentMatrix",
-                            matrix,
-                            score,
-                            next,
-                            hold
-                        }));
+                        if (wsGames[id][otherPlayer] && wsGames[id][otherPlayer].readyState == 1) {
+                            wsGames[id][otherPlayer].send(JSON.stringify({
+                                method: "updateOpponentMatrix",
+                                matrix,
+                                score,
+                                next,
+                                hold
+                            }));
+                        }
                     });
                 }
             });
