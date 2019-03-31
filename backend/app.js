@@ -24,6 +24,8 @@ app.use(session({
     secret: 'keyboard cat',
 }));
 
+app.use(express.static('public'))
+
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
 
