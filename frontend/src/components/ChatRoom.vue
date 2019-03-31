@@ -9,37 +9,31 @@
 <script>
 export default {
     name:"chatroom",
-    props:{
-        msg: String,
-    },
-    data(){
-        return{
-            messages:[],
-            websock: null,
-        } 
+    data: {
+        messages: [],
+        ws: null,
     },
     methods:{
-        connectWebsocket(){
+        connectWebsocket: function(){
             this.ws = new WebSocket('ws://localhost:3000/api/chat');
             this.ws.onerror = this.websocketonerror();
         },
 
-        closeWebsocket(){
+        closeWebsocket: function(){
             this.ws.close()
         },
 
-        sendMessage(text){
+        sendMessage: function(text){
             this.ws.send(text);
+            this.reciveMessage();
         },
-        websocketonerror(){//连接建立失败重连
+        websocketonerror: function(){
             this.connectWebSocket();
-      },
-    },
-    computed:{
-        reciveMessage(){
+        },
+        reciveMessage: function(){
             this.ws.onmessage = function(res) {
                 var response = res.data;
-                this.messages.append(res);
+                this.messages.push(response);
             }
         }
     },
