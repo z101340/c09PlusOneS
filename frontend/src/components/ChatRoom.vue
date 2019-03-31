@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div v-for="message in messages">{{message}}</div>
-        <textarea v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg"></textarea>
-        <button v-on:click="sendMessage(textMsg)">send</button>
+        <div class="chatMessage" v-for="message in messages">{{message}}</div>
+        <textarea v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg" class="inputBox"></textarea>
+        <button v-on:click="sendMessage(textMsg)" class="sendButton">send</button>
     </div>
 </template>
 
@@ -49,3 +49,16 @@ export default {
     }
 }
 </script>
+<style scoped>
+.chatMessage{
+    font-family:'Courier New', Courier, monospace;
+    margin: auto;
+    width: fit-content;
+    min-width: 50%;
+}
+.inputBox{
+    margin: auto;
+    width: fit-content;
+    min-width: 50%;
+}
+</style>
