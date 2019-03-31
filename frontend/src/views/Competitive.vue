@@ -131,4 +131,7 @@ export default {
     padding-right: 5em;
     height: 100%;
 }
+.chatroom{
+    padding-top: 20px;
+}
 </style>
