@@ -1,8 +1,12 @@
 <template>
+<div class="scoreBoard">
     <div class="score" v-bind:score="score">
         Score: {{score}}
-        Other Score: {{score}}
     </div>
+    <div class="enemyScore" v-bind:otherScore="otherScore">
+        Enemy Score: {{otherScore}} 
+    </div>
+</div>
 </template>
 
 <script>
@@ -11,6 +15,6 @@ export default {
     props: [
         'score',
         'otherScore'
-    ]
+    ],
 }
 </script>
