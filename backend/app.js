@@ -175,9 +175,9 @@ app.patch('/api/game/:id', function (req, res) {
 });
 
 connects = [];
-
-app.ws('/api/chat', function(ws, req) {
+app.ws('/api/game/:id/chat', function(ws, req) {
     connects.push(ws);
+    console.log(req.sessionID);
     ws.on('message', function(message) {
         console.log('Received -', message);
         connects.forEach(socket => {
@@ -196,10 +196,11 @@ playerConnects = [];
 app.ws('/api/game', function(ws, req){
     playerConnects.push(ws);
     console.log('Player ' + req.sessionID + ' connected');
-    ws.on('message', function(message){
-        console.log('Received Score -', message);
+
+    ws.on('message', function(score){
+        console.log('Received Score -', score);
         connects.forEach(socket => {
-            socket.send(message);
+            socket.send(score);
         });
     });
 

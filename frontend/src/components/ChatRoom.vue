@@ -1,8 +1,10 @@
 <template>
-    <div>
-        <div class="chatMessage" v-for="message in messages">{{message}}</div>
-        <textarea v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg" class="inputBox"></textarea>
-        <button v-on:click="sendMessage(textMsg)" class="sendButton">send</button>
+    <div class = "box">
+        <div class="rows is-multiline is-mobile">
+            <div class="row is-half is-narrow" v-for="message in messages">{{message}}</div>
+        </div>
+        <input v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg" class="input is-large is-hovered">
+        <a class="button is-primary is-large" v-on:click="sendMessage(textMsg)">send</a>
     </div>
 </template>
 
@@ -18,7 +20,7 @@ export default {
     },
     methods:{
         connectWebsocket: function(){
-            this.ws = new WebSocket('ws://localhost:3000/api/chat');
+            this.ws = new WebSocket('ws://localhost:3000/api/game/:id/chat');
             // this.ws.onerror = this.websocketonerror();
         },
 
@@ -27,19 +29,23 @@ export default {
         },
 
         sendMessage: function(text){
-            this.ws.send(text);
-            this.reciveMessage();
+            if(text.length != 0){
+                this.ws.send(text);
+                this.reciveMessage();
+            }
         },
         websocketonerror: function(){
             this.connectWebsocket();
         },
         reciveMessage: function(){
             var msgs = this.messages;
+            var temp = this.textMsg;
             this.ws.onmessage = function(msg) {
-                var response = msg.data;
+                var response = msg.data
                 msgs.push(response);
             }
             this.messages = msgs;
+            this.textMsg = '';
         }
     },
     destroyed(){
@@ -51,15 +57,18 @@ export default {
 }
 </script>
 <style scoped>
-.chatMessage{
-    font-family:'Courier New', Courier, monospace;
+.input{
     margin: auto;
     width: fit-content;
     min-width: 50%;
 }
-.inputBox{
+.row{
     margin: auto;
-    width: fit-content;
-    min-width: 50%;
+    text-align: left;
+    width:40%;
+}
+.box{
+    margin: auto;
+    width:80%
 }
 </style>

@@ -2,12 +2,22 @@
     <div>
         this is a competitive board
         {{ id }}
+        <chatroom/>
     </div>
 </template>
 
 <script>
+import chatroom from '../components/ChatRoom.vue';
 export default {
     name: "competitive",
+    components:{
+        chatroom
+    },
+    data(){
+        return{
+            ws: null
+        }
+    },
     computed: {
         id() {
             return this.$route.params.id
