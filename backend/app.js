@@ -185,27 +185,26 @@ app.patch('/api/game/:id', function (req, res) {
 app.ws('/api/game/:id/ws', function(ws, req) {
     const sessionID = req.sessionID;
     const id = req.params.id;
-    console.log(id);
-
-    wsClients[sessionID] = ws;
+    let isHost = false;
     if (!wsGames[id]) {
         wsGames[id] = {};
     }
-    
+    if (req.session[id] && req.session[id].isHost) {
+        isHost = true;
+        wsGames[id].host = ws;
+    } else {
+        wsGames[id].guest = ws;
+        if (!req.session[id]) {
+            req.session[id] = { isHost: false };
+        }
+    }
+    console.log(id);
+
+
     MongoClient.connect(mongoUrl, function (err, db) {
         if (!err && ObjectId.isValid(id)) {
         const dbo = db.db("tetris");
             dbo.collection("games").findOne({ _id: new ObjectId(id) }, function (err, dbRes) {
-                if (!err && dbRes) {
-                    if (req.session[id] && req.session[id].isHost) {
-                        wsGames[id].host = ws;
-                    } else {
-                        wsGames[id].guest = ws;
-                        if (!req.session[id]) {
-                            req.session[id] = { isHost: false};
-                        }
-                    }
-                }
             });
         }
     });
