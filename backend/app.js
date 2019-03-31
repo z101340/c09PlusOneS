@@ -61,7 +61,7 @@ app.post('/api/game', (req, res) => {
                 host: new Player(),
                 guest: new Player(),
                 hostSid: req.sessionID,
-                hasStarted: false
+                hasStarted: false,
             };
 
             dbo.collection("games").insertOne(emptyGame, function(err, dbRes) {
