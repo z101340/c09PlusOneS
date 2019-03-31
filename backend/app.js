@@ -185,6 +185,24 @@ app.ws('/api/chat', function(ws, req) {
     }); 
 });
 
+playerConnects = [];
+app.ws('/api/game', function(ws, req){
+    playerConnects.push(ws);
+    console.log('Player ' + req.sessionID + ' connected');
+    ws.on('message', function(message){
+        console.log('Received Score -', message);
+        connects.forEach(socket => {
+            socket.send(message);
+        });
+    });
+
+    ws.on('close', function(){
+        playerConnects = playerConnects.filter(conn => {
+          return (conn === ws) ? false : true;
+        });
+      }); 
+});
+
 app.listen(port, () => {
     console.log("server started");
 });
