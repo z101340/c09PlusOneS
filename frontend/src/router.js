@@ -19,13 +19,6 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Competitive.vue')
-<<<<<<< HEAD
-    },
-    {
-      path: '/chat/',
-      name: 'chat',
-      component: () => import('./components/ChatRoom.vue')
-=======
     }, {
       path: '/die',
       name: 'die',
@@ -34,7 +27,6 @@ export default new Router({
       path: '/win',
       name: 'die',
       component: Win
->>>>>>> master
     }
   ]
 })

@@ -1,9 +1,13 @@
 <template>
     <div class = "box">
         <div class="rows is-multiline is-mobile">
-            <div class="row is-half is-narrow has-cell-border" v-for="message in messages">{{message}}</div>
+            <div class="row is-half is-narrow has-cell-border" v-for="message in messages">{{message.player}} {{message.text}}</div>
         </div>
-        <input v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg" class="input is-large is-hovered">
+        <input v-model="textMsg" 
+                placeholder="input message" 
+                v-bind:textMsg="textMsg" 
+                class="input is-large is-hovered"
+                v-on:keyup.13="sendMessage(textMsg)">
         <a class="button is-primary is-large" v-on:click="sendMessage(textMsg)">send</a>
     </div>
 </template>
@@ -31,6 +35,7 @@ export default {
         sendMessage: function(text){
             if(text.length != 0){
                 this.ws.send(text);
+                this.messages.push({player: "You: ",text: text})
                 this.reciveMessage();
             }
         },
@@ -42,7 +47,9 @@ export default {
             var temp = this.textMsg;
             this.ws.onmessage = function(msg) {
                 var response = msg.data
-                msgs.push(response);
+                if(temp != response){
+                    msgs.push({player: "Opponent: ", text: response});
+                }
             }
             this.messages = msgs;
             this.textMsg = '';

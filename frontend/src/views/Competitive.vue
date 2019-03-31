@@ -1,11 +1,5 @@
 <template>
     <div>
-<<<<<<< HEAD
-        {{ id }}
-        <chatroom/>
-        <Board v-if="hasStarted" v-on:matrix-changed="updateMatrix" />
-        <BoardLimited v-if="hasStarted" v-bind:matrix="opponent.matrix" v-bind:score="opponent.score" />
-=======
         <Share v-if="!hasStarted" />
         <div class="columns board">
             <div class="column gamepad">
@@ -23,7 +17,7 @@
                     v-bind:next="opponent.next" />
             </div>
         </div>
->>>>>>> master
+        <chatroom/>
     </div>
 </template>
 
@@ -38,11 +32,8 @@ export default {
     components: {
         BoardLimited,
         Board,
-<<<<<<< HEAD
-        chatroom
-=======
+        chatroom,
         Share
->>>>>>> master
     },
     data() {
         return {
