@@ -20,13 +20,13 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/Competitive.vue')
     }, {
-      path: '/die',
+      path: '/die/:id',
       name: 'die',
-      component: Die
+      component: Die,
     }, {
-      path: '/win',
+      path: '/win/:id',
       name: 'die',
-      component: Win
+      component: Win,
     }
   ]
 })

@@ -72,7 +72,13 @@ export default {
                     hold: data.hold
                 }
             } else if (data.method == "win") {
-                this.$router.push("/win")
+                this.$router.push({
+                    path: "/win/" + this.id,
+                    query: {
+                        score: this.me.score,
+                        otherscore: this.opponent.score
+                    }
+                })
             }
         }
     },
@@ -113,7 +119,11 @@ export default {
                 method: "die"
             }))
             this.$router.push({
-                path: '/die'
+                path: '/die/'+this.id,
+                query: {
+                    score: this.me.score,
+                    otherscore: this.opponent.score
+                }
             })
         }
     }
@@ -130,8 +140,5 @@ export default {
     padding-left: 5em;
     padding-right: 5em;
     height: 100%;
-}
-.chatroom{
-    padding-top: 20px;
 }
 </style>
