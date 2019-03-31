@@ -3,7 +3,7 @@
         <div class="box columns">
             <Matrix class="column" v-bind:matrix="matrix" />
             <div class="column">
-                <Side class="is-vertical-center" v-bind:nextTetromino="nextTetromino" v-bind:score="score" />
+                <Side class="is-vertical-center" v-bind:nextTetromino="next" v-bind:score="score" v-bind:holdTetromino="hold" />
             </div>
         </div>
     </div>
@@ -16,8 +16,9 @@ import Side from './Side.vue'
 export default {
     props: [
         'matrix',
-        'nextTetrimino',
-        'score'
+        'next',
+        'score',
+        'hold'
     ],
     components: {
         Matrix,

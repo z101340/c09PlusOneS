@@ -1,9 +1,29 @@
 <template>
     <div>
+<<<<<<< HEAD
         {{ id }}
         <chatroom/>
         <Board v-if="hasStarted" v-on:matrix-changed="updateMatrix" />
         <BoardLimited v-if="hasStarted" v-bind:matrix="opponent.matrix" v-bind:score="opponent.score" />
+=======
+        <Share v-if="!hasStarted" />
+        <div class="columns board">
+            <div class="column gamepad">
+                <Board v-if="hasStarted"
+                    v-on:matrix-changed="updateMatrix"
+                    v-on:die="die"
+                    v-bind:initialMatrix="me.matrix"
+                    v-bind:initialScore="me.score" />
+            </div>
+            <div class="column gamepad">
+                <BoardLimited v-if="hasStarted" 
+                    v-bind:matrix="opponent.matrix"
+                    v-bind:score="opponent.score"
+                    v-bind:hold="opponent.hold"
+                    v-bind:next="opponent.next" />
+            </div>
+        </div>
+>>>>>>> master
     </div>
 </template>
 
@@ -11,17 +31,23 @@
 import chatroom from '../components/ChatRoom.vue';
 import BoardLimited from './../components/BoardLimited.vue'
 import Board from './../components/Board.vue'
+import Share from './../components/Share.vue'
 
 export default {
     name: "competitive",
     components: {
         BoardLimited,
         Board,
+<<<<<<< HEAD
         chatroom
+=======
+        Share
+>>>>>>> master
     },
     data() {
         return {
             opponent: {},
+            me: {},
             hasStarted: false,
             ws: new WebSocket("ws://localhost:3000/api/game/" +this.$route.params.id + "/ws")
         }
@@ -50,17 +76,20 @@ export default {
             } else if (data.method == "updateOpponentMatrix") {
                 this.opponent = {
                     matrix: data.matrix,
-                    score: data.score
+                    score: data.score,
+                    next: data.next,
+                    hold: data.hold
                 }
+            } else if (data.method == "win") {
+                this.$router.push("/win")
             }
         }
     },
     methods: {
         setupGame: function (gameInfo) {
-            const me = gameInfo.players.you;
+            this.me = gameInfo.players.you;
             const opponent = gameInfo.players.opponent;
 
-            this.opponent
             this.hasStarted = gameInfo.hasStarted
 
             if (!gameInfo.isHost && !this.hasStarted) {
@@ -76,16 +105,39 @@ export default {
                     }
                 })
             }
+
         },
         updateMatrix: function(pack) {
-            const matrix = pack.matrix;
-            const score = pack.score;
+            const {matrix, score, hold, next} = pack;
             this.ws.send(JSON.stringify({
                 method: "updateMatrix",
                 matrix,
-                score
+                score,
+                hold,
+                next
             }))
+        },
+        die: function() {
+            this.ws.send(JSON.stringify({
+                method: "die"
+            }))
+            this.$router.push({
+                path: '/die'
+            })
         }
     }
 }
 </script>
+
+<style scoped>
+.board {
+    margin: auto;
+    position: relative;
+}
+.gamepad {
+    width: 20vw;
+    padding-left: 5em;
+    padding-right: 5em;
+    height: 100%;
+}
+</style>

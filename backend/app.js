@@ -26,6 +26,8 @@ app.use(session({
     secret: 'keyboard cat',
 }));
 
+app.use(express.static('public'))
+
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
 
@@ -171,10 +173,12 @@ app.patch('/api/game/:id', function (req, res) {
                     };
                     res.json({ success: true, result });
                     // inform the host
-                    console.log(wsGames);
-                    wsGames[id].host.send(JSON.stringify({
-                        method: "guestJoined",
-                    }));
+                    const tell = wsGames[id].host;
+                    if (tell && tell.readyState == 1) {
+                        tell.send(JSON.stringify({
+                            method: "guestJoined",
+                        }));
+                    }
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
@@ -204,52 +208,62 @@ app.ws('/api/game/:id/chat', function(ws, req) {
 app.ws('/api/game/:id/ws', function(ws, req) {
     const sessionID = req.sessionID;
     const id = req.params.id;
-    console.log(id);
-
-    wsClients[sessionID] = ws;
+    let isHost = false;
     if (!wsGames[id]) {
         wsGames[id] = {};
     }
-    
+    if (req.session[id] && req.session[id].isHost) {
+        isHost = true;
+        wsGames[id].host = ws;
+    } else {
+        wsGames[id].guest = ws;
+        if (!req.session[id]) {
+            req.session[id] = { isHost: false };
+        }
+    }
+
+
     MongoClient.connect(mongoUrl, function (err, db) {
         if (!err && ObjectId.isValid(id)) {
-        const dbo = db.db("tetris");
+            const dbo = db.db("tetris");
             dbo.collection("games").findOne({ _id: new ObjectId(id) }, function (err, dbRes) {
-                if (!err && dbRes) {
-                    if (req.session[id] && req.session[id].isHost) {
-                        wsGames[id].host = ws;
-                    } else {
-                        wsGames[id].guest = ws;
-                        if (!req.session[id]) {
-                            req.session[id] = { isHost: false};
-                        }
-                    }
-                }
             });
         }
     });
     ws.on("message", function (message) {
         const data = JSON.parse(message);
         const isHost = req.session[id].isHost;
+        const player = isHost ? "host" : "guest";
+        const otherPlayer = isHost ? "guest" : "host";
         if (data.method == "updateMatrix") {
             const matrix = data.matrix;
             const score = data.score;
-            const player = isHost ? "host" : "guest";
+            const next = data.next;
+            const hold = data.hold;
             MongoClient.connect(mongoUrl, function (err, db) {
                 if (!err && ObjectId.isValid(id)) {
                     const dbo = db.db("tetris");
                     let update = { $set: {} };
                     update.$set[player] = { matrix, score };
-                    dbo.collection("games").findOneAndUpdate({_id: new ObjectId(id)}, update, function(err, res) {
-                        const otherPlayer = isHost ? "guest" : "host";
-                        wsGames[id][otherPlayer].send(JSON.stringify({
-                            method: "updateOpponentMatrix",
-                            matrix,
-                            score
-                        }));
+                    dbo.collection("games").findOneAndUpdate({ _id: new ObjectId(id) }, update, function (err, res) {
+                        if (wsGames[id][otherPlayer] && wsGames[id][otherPlayer].readyState == 1) {
+                            wsGames[id][otherPlayer].send(JSON.stringify({
+                                method: "updateOpponentMatrix",
+                                matrix,
+                                score,
+                                next,
+                                hold
+                            }));
+                        }
                     });
                 }
             });
+        } else if (data.method == "die") {
+            if (wsGames[id][otherPlayer] && wsGames[id][otherPlayer].readyState == 1) {
+                wsGames[id][otherPlayer].send(JSON.stringify({
+                    method: "win"
+                }));
+            }
         }
     });
 });
