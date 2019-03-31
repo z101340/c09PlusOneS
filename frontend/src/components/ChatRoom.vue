@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-for="message in messages">{{message}}</div>
-        <textarea v-model="textMsg" placeholder="input message"></textarea>
+        <textarea v-model="textMsg" placeholder="input message" v-bind:textMsg="textMsg"></textarea>
         <button v-on:click="sendMessage(textMsg)">send</button>
     </div>
 </template>
@@ -9,9 +9,11 @@
 <script>
 export default {
     name:"chatroom",
-    data: {
-        messages: [],
-        ws: null,
+    data() {
+        return{
+            messages: [],
+            ws: null,
+        }
     },
     methods:{
         connectWebsocket: function(){
@@ -31,10 +33,12 @@ export default {
             this.connectWebSocket();
         },
         reciveMessage: function(){
-            this.ws.onmessage = function(res) {
-                var response = res.data;
-                this.messages.push(response);
+            var msgs = this.messages;
+            this.ws.onmessage = function(msg) {
+                var response = msg.data;
+                msgs.push(response);
             }
+            this.messages = msgs;
         }
     },
     destroyed(){
