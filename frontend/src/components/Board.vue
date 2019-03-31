@@ -87,6 +87,7 @@ export default {
         if (init == false) {
             this.matrix = this.blendedMatrix
         }
+        this.$emit('matrix-changed', {matrix: this.matrix, score: this.score})
 
         this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
