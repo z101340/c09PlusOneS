@@ -135,7 +135,6 @@ app.patch('/api/game/:id', function (req, res) {
                     console.log(err);
                     res.status(500).json({ success: false, err });
                 }else if (dbRes) {
-                    console.log(dbRes)
                     let value = {};
                     if (req.sessionID == dbRes.value.hostSid) {
                         value = {
