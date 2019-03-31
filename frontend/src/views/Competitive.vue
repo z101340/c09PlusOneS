@@ -1,6 +1,6 @@
 <template>
     <div>
-        {{ id }}
+        <Share v-if="!hasStarted" />
         <div class="columns board">
             <div class="column gamepad">
                 <Board v-if="hasStarted"
@@ -22,12 +22,14 @@
 <script>
 import BoardLimited from './../components/BoardLimited.vue'
 import Board from './../components/Board.vue'
+import Share from './../components/Share.vue'
 
 export default {
     name: "competitive",
     components: {
         BoardLimited,
-        Board
+        Board,
+        Share
     },
     data() {
         return {
