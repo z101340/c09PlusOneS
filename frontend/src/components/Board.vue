@@ -108,8 +108,7 @@ export default {
         }
     },
     die: function() {
-        alert("you died")
-        this.initMatrixAndTetrominos()
+        this.$emit("die")
     },
     reduceFilledRows: function() {
         for (let row = 0; row < this.HEIGHT; row++) {

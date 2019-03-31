@@ -5,6 +5,7 @@
             <div class="column gamepad">
                 <Board v-if="hasStarted"
                     v-on:matrix-changed="updateMatrix"
+                    v-on:die="die"
                     v-bind:initialMatrix="me.matrix"
                     v-bind:initialScore="me.score" />
             </div>
@@ -67,6 +68,8 @@ export default {
                     next: data.next,
                     hold: data.hold
                 }
+            } else if (data.method == "win") {
+                this.$router.push("/win")
             }
         }
     },
@@ -101,6 +104,14 @@ export default {
                 hold,
                 next
             }))
+        },
+        die: function() {
+            this.ws.send(JSON.stringify({
+                method: "die"
+            }))
+            this.$router.push({
+                path: '/die'
+            })
         }
     }
 }

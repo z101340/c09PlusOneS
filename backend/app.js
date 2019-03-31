@@ -212,19 +212,19 @@ app.ws('/api/game/:id/ws', function(ws, req) {
     ws.on("message", function (message) {
         const data = JSON.parse(message);
         const isHost = req.session[id].isHost;
+        const player = isHost ? "host" : "guest";
+        const otherPlayer = isHost ? "guest" : "host";
         if (data.method == "updateMatrix") {
             const matrix = data.matrix;
             const score = data.score;
             const next = data.next;
             const hold = data.hold;
-            const player = isHost ? "host" : "guest";
             MongoClient.connect(mongoUrl, function (err, db) {
                 if (!err && ObjectId.isValid(id)) {
                     const dbo = db.db("tetris");
                     let update = { $set: {} };
                     update.$set[player] = { matrix, score };
                     dbo.collection("games").findOneAndUpdate({ _id: new ObjectId(id) }, update, function (err, res) {
-                        const otherPlayer = isHost ? "guest" : "host";
                         if (wsGames[id][otherPlayer] && wsGames[id][otherPlayer].readyState == 1) {
                             wsGames[id][otherPlayer].send(JSON.stringify({
                                 method: "updateOpponentMatrix",
@@ -237,6 +237,12 @@ app.ws('/api/game/:id/ws', function(ws, req) {
                     });
                 }
             });
+        } else if (data.method == "die") {
+            if (wsGames[id][otherPlayer] && wsGames[id][otherPlayer].readyState == 1) {
+                wsGames[id][otherPlayer].send(JSON.stringify({
+                    method: "win"
+                }));
+            }
         }
     });
 });
