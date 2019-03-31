@@ -97,25 +97,29 @@ app.get('/api/game/:id', function (req, res) {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ success: false, err });
-                }else if (dbRes) {
-                    let value = {};
+                } else if (dbRes) {
+                    let isHost;
+                    let players = {};
                     if (req.sessionID == dbRes.hostSid) {
-                        result = {
+                        players = {
                         // client is host
                             you: dbRes.host,
                             opponent: dbRes.guest,
-                            isHost: true
                         };
+                        isHost = true;
                     } else {
-                        value = {
+                        players = {
                             opponent: dbRes.host,
                             you: dbRes.guest,
-                            isHost: false
                         };
-                        you = dbRes.guest;
-                        opponent = dbRes.host;
+                        isHost = false;
                     }
-                    res.json({ success: true, value });
+                    const result = {
+                        players,
+                        isHost,
+                        hasStarted: dbRes.hasStarted
+                    };
+                    res.json({ success: true, result });
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
@@ -140,25 +144,28 @@ app.patch('/api/game/:id', function (req, res) {
                     console.log(err);
                     res.status(500).json({ success: false, err });
                 }else if (dbRes) {
-                    console.log(dbRes)
-                    let value = {};
+                    let players = {};
+                    let isHost;
                     if (req.sessionID == dbRes.value.hostSid) {
-                        value = {
+                        players = {
                         // client is host
                             you: dbRes.value.host,
                             opponent: dbRes.value.guest,
-                            isHost: true
                         };
+                        isHost = true;
                     } else {
-                        value = {
+                        players = {
                             opponent: dbRes.value.host,
                             you: dbRes.value.guest,
-                            isHost: false
                         };
-                        you = dbRes.guest;
-                        opponent = dbRes.host;
+                        isHost = false;
                     }
-                    res.json({ success: true, value });
+                    const result = {
+                        players,
+                        isHost,
+                        hasStarted: dbRes.value.hasStarted
+                    };
+                    res.json({ success: true, result });
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
