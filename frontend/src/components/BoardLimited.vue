@@ -26,9 +26,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.board {
-    width: fit-content;
-}
-</style>

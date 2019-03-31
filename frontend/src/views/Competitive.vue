@@ -106,6 +106,9 @@ export default {
     position: relative;
 }
 .gamepad {
-    min-width: 30vw;
+    width: 20vw;
+    padding-left: 5em;
+    padding-right: 5em;
+    height: 100%;
 }
 </style>

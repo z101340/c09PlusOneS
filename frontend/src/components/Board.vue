@@ -297,11 +297,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.board {
-    /* margin: auto; */
-    width: fit-content;
-    /* min-width: 50%; */
-}
-</style>
