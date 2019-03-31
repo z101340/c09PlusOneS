@@ -1,7 +1,8 @@
 <template>
     <div>
-        <div class="message">{{msg}}</div>
-        <textarea v-model="text" placeholder="inputmessage"></textarea>
+        <div v-for="message in messages">{{message}}</div>
+        <textarea v-model="text" placeholder="input message"></textarea>
+        <button v-on:click="sendMessage(text)">send</button>
     </div>
 </template>
 
@@ -9,30 +10,40 @@
 export default {
     name:"chatroom",
     props:{
-        msg: String
+        msg: String,
+    },
+    data(){
+        return{
+            messages:[],
+            websock: null,
+        } 
     },
     methods:{
-        connectWs(){
-            const ws = new WebSocket('ws://localhost:8080');
+        connectWebsocket(){
+            this.ws = new WebSocket('ws://localhost:8080/api/chat');
         },
 
-        sendMessage(){
-            var text = vm.text;
-            ws.send(text);
-            vm.text = '';
+        closeWebsocket(){
+            this.ws.close()
         },
 
+        sendMessage(text){
+            this.ws.send(text);
+        }
+    },
+    computed:{
         reciveMessage(){
-            ws.onmessage = function(res) {
+            this.ws.onmessage = function(res) {
                 var response = res.data;
-                this.msg = res;
+                this.messages.append(res);
             }
         }
-
-        
+    },
+    destroyed(){
+        this.closeWebsocket();
     },
     created(){
-        this.connectWs();
+        this.connectWebsocket();
     }
 }
 </script>
