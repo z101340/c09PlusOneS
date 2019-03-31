@@ -42,7 +42,6 @@ class Player  {
     constructor() {
         this.matrix = new Matrix(10, 20);
         this.score = 0;
-        this.sid = '';
     }
 }
 
@@ -57,6 +56,7 @@ app.post('/api/game', (req, res) => {
                 host: new Player(),
                 guest: new Player(),
                 hostSid: req.sessionID,
+                hasStarted: false
             };
 
             dbo.collection("games").insertOne(emptyGame, function(err, dbRes) {
@@ -93,7 +93,7 @@ app.get('/api/game/:id', function (req, res) {
                     console.log(err);
                     res.status(500).json({ success: false, err });
                 }else if (dbRes) {
-                    let result = {};
+                    let value = {};
                     if (req.sessionID == dbRes.hostSid) {
                         result = {
                         // client is host
@@ -102,7 +102,7 @@ app.get('/api/game/:id', function (req, res) {
                             isHost: true
                         };
                     } else {
-                        result = {
+                        value = {
                             opponent: dbRes.host,
                             you: dbRes.guest,
                             isHost: false
@@ -110,7 +110,50 @@ app.get('/api/game/:id', function (req, res) {
                         you = dbRes.guest;
                         opponent = dbRes.host;
                     }
-                    res.json({ success: true, result });
+                    res.json({ success: true, value });
+                } else {
+                    res.status(500).json({ success: false, err: "no game matched" });
+                }
+            });
+        }
+    });
+});
+
+app.patch('/api/game/:id', function (req, res) {
+    const id = req.params.id;
+    MongoClient.connect(mongoUrl, function (err, db) {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ success: false, err });
+        } else if (!ObjectId.isValid(id)) {
+            res.status(422).json({ success: false, err: "bad id input" });
+        } else {
+            const dbo = db.db("tetris");
+            dbo.collection("games").findOneAndUpdate({ _id: new ObjectId(id) },
+             { $set: {hasStarted: true}}, {returnNewDocument: true}, function (err, dbRes) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({ success: false, err });
+                }else if (dbRes) {
+                    console.log(dbRes)
+                    let value = {};
+                    if (req.sessionID == dbRes.value.hostSid) {
+                        value = {
+                        // client is host
+                            you: dbRes.value.host,
+                            opponent: dbRes.value.guest,
+                            isHost: true
+                        };
+                    } else {
+                        value = {
+                            opponent: dbRes.value.host,
+                            you: dbRes.value.guest,
+                            isHost: false
+                        };
+                        you = dbRes.guest;
+                        opponent = dbRes.host;
+                    }
+                    res.json({ success: true, value });
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
                 }
