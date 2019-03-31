@@ -1,8 +1,8 @@
 <template>
     <div>
         <div v-for="message in messages">{{message}}</div>
-        <textarea v-model="text" placeholder="input message"></textarea>
-        <button v-on:click="sendMessage(text)">send</button>
+        <textarea v-model="textMsg" placeholder="input message"></textarea>
+        <button v-on:click="sendMessage(textMsg)">send</button>
     </div>
 </template>
 
@@ -20,7 +20,8 @@ export default {
     },
     methods:{
         connectWebsocket(){
-            this.ws = new WebSocket('ws://localhost:8080/api/chat');
+            this.ws = new WebSocket('ws://localhost:3000/api/chat');
+            this.ws.onerror = this.websocketonerror();
         },
 
         closeWebsocket(){
@@ -29,7 +30,10 @@ export default {
 
         sendMessage(text){
             this.ws.send(text);
-        }
+        },
+        websocketonerror(){//连接建立失败重连
+            this.connectWebSocket();
+      },
     },
     computed:{
         reciveMessage(){
@@ -47,7 +51,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-</style>

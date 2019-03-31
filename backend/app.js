@@ -1,11 +1,10 @@
 /*jshint esversion: 6 */
 
 const express = require('express');
+const expressWs = require('express-ws');
 const app = new express();
-
+expressWs(app);
 const cors = require("cors");
-
-const expressWs = require('express-ws')(app);
 const morgan = require('morgan');
 
 const session = require('express-session');
