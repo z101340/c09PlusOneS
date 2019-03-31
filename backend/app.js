@@ -171,7 +171,6 @@ connects = [];
 
 app.ws('/api/chat', function(ws, req) {
     connects.push(ws);
-    ws.send('你连上了');
     ws.on('message', function(message) {
         console.log('Received -', message);
         connects.forEach(socket => {

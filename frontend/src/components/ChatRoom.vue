@@ -11,6 +11,7 @@ export default {
     name:"chatroom",
     data() {
         return{
+            textMsg: null,
             messages: [],
             ws: null,
         }
@@ -18,7 +19,7 @@ export default {
     methods:{
         connectWebsocket: function(){
             this.ws = new WebSocket('ws://localhost:3000/api/chat');
-            this.ws.onerror = this.websocketonerror();
+            // this.ws.onerror = this.websocketonerror();
         },
 
         closeWebsocket: function(){
@@ -30,7 +31,7 @@ export default {
             this.reciveMessage();
         },
         websocketonerror: function(){
-            this.connectWebSocket();
+            this.connectWebsocket();
         },
         reciveMessage: function(){
             var msgs = this.messages;
