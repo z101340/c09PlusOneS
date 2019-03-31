@@ -3,6 +3,9 @@
 const express = require('express');
 const app = new express();
 
+const expressWs = require('express-ws');
+expressWs(app);
+
 const cors = require("cors");
 
 const session = require('express-session');
@@ -24,8 +27,13 @@ app.use(session({
 const { MongoClient, ObjectId } = require("mongodb");
 const mongoUrl = "mongodb://localhost:27017/tetris";
 
-class Matrix {
-    constructor(width, height) {
+let wsGames = {};
+let wsClients = {};
+
+class Player  {
+    constructor() {
+        const height = 20;
+        const width = 10;
         let matrix = [];
         for (let rowCount = 0; rowCount < height; rowCount++) {
             let row = [];
@@ -35,12 +43,6 @@ class Matrix {
             matrix.push(row);
         }
         this.matrix = matrix;
-    }
-}
-
-class Player  {
-    constructor() {
-        this.matrix = new Matrix(10, 20);
         this.score = 0;
     }
 }
@@ -55,7 +57,6 @@ app.post('/api/game', (req, res) => {
             const emptyGame = {
                 host: new Player(),
                 guest: new Player(),
-                hostSid: req.sessionID,
                 hasStarted: false
             };
 
@@ -68,6 +69,9 @@ app.post('/api/game', (req, res) => {
                     });
                 } else {
                     const id = dbRes.insertedId;
+                    req.session[id]  = {
+                        isHost: true
+                    };
                     res.json({
                         success: true,
                         id
@@ -95,7 +99,7 @@ app.get('/api/game/:id', function (req, res) {
                 } else if (dbRes) {
                     let isHost;
                     let players = {};
-                    if (req.sessionID == dbRes.hostSid) {
+                    if (req.session[id] && req.session[id].isHost) {
                         players = {
                         // client is host
                             you: dbRes.host,
@@ -108,6 +112,9 @@ app.get('/api/game/:id', function (req, res) {
                             you: dbRes.guest,
                         };
                         isHost = false;
+                        if (!req.session[id]) {
+                            req.session[id] = { isHost: false};
+                        }
                     }
                     const result = {
                         players,
@@ -141,7 +148,7 @@ app.patch('/api/game/:id', function (req, res) {
                 }else if (dbRes) {
                     let players = {};
                     let isHost;
-                    if (req.sessionID == dbRes.value.hostSid) {
+                    if (req.session.isHost) {
                         players = {
                         // client is host
                             you: dbRes.value.host,
@@ -161,8 +168,67 @@ app.patch('/api/game/:id', function (req, res) {
                         hasStarted: dbRes.value.hasStarted
                     };
                     res.json({ success: true, result });
+                    // inform the host
+                    console.log(wsGames);
+                    wsGames[id].host.send(JSON.stringify({
+                        method: "guestJoined",
+                    }));
                 } else {
                     res.status(500).json({ success: false, err: "no game matched" });
+                }
+            });
+        }
+    });
+});
+
+
+app.ws('/api/game/:id/ws', function(ws, req) {
+    const sessionID = req.sessionID;
+    const id = req.params.id;
+    console.log(id);
+
+    wsClients[sessionID] = ws;
+    if (!wsGames[id]) {
+        wsGames[id] = {};
+    }
+    
+    MongoClient.connect(mongoUrl, function (err, db) {
+        if (!err && ObjectId.isValid(id)) {
+        const dbo = db.db("tetris");
+            dbo.collection("games").findOne({ _id: new ObjectId(id) }, function (err, dbRes) {
+                if (!err && dbRes) {
+                    if (req.session[id] && req.session[id].isHost) {
+                        wsGames[id].host = ws;
+                    } else {
+                        wsGames[id].guest = ws;
+                        if (!req.session[id]) {
+                            req.session[id] = { isHost: false};
+                        }
+                    }
+                }
+            });
+        }
+    });
+    ws.on("message", function (message) {
+        const data = JSON.parse(message);
+        const isHost = req.session[id].isHost;
+        if (data.method == "updateMatrix") {
+            const matrix = data.matrix;
+            const score = data.score;
+            const player = isHost ? "host" : "guest";
+            MongoClient.connect(mongoUrl, function (err, db) {
+                if (!err && ObjectId.isValid(id)) {
+                    const dbo = db.db("tetris");
+                    let update = { $set: {} };
+                    update.$set[player] = { matrix, score };
+                    dbo.collection("games").findOneAndUpdate({_id: new ObjectId(id)}, update, function(err, res) {
+                        const otherPlayer = isHost ? "guest" : "host";
+                        wsGames[id][otherPlayer].send(JSON.stringify({
+                            method: "updateOpponentMatrix",
+                            matrix,
+                            score
+                        }));
+                    });
                 }
             });
         }
