@@ -1,8 +1,18 @@
 <template>
     <div>
         {{ id }}
-        <Board v-if="hasStarted" v-on:matrix-changed="updateMatrix" />
-        <BoardLimited v-if="hasStarted" v-bind:matrix="opponent.matrix" v-bind:score="opponent.score" />
+        <div class="columns board">
+            <div class="column gamepad">
+                <Board v-if="hasStarted" v-on:matrix-changed="updateMatrix" />
+            </div>
+            <div class="column gamepad">
+                <BoardLimited v-if="hasStarted" 
+                    v-bind:matrix="opponent.matrix"
+                    v-bind:score="opponent.score"
+                    v-bind:hold="opponent.hold"
+                    v-bind:next="opponent.next" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -47,7 +57,9 @@ export default {
             } else if (data.method == "updateOpponentMatrix") {
                 this.opponent = {
                     matrix: data.matrix,
-                    score: data.score
+                    score: data.score,
+                    hold: data.hold,
+                    next: data.next
                 }
             }
         }
@@ -75,14 +87,25 @@ export default {
             }
         },
         updateMatrix: function(pack) {
-            const matrix = pack.matrix;
-            const score = pack.score;
+            const {matrix, score, hold, next} = pack;
             this.ws.send(JSON.stringify({
                 method: "updateMatrix",
                 matrix,
-                score
+                score,
+                hold,
+                next
             }))
         }
     }
 }
 </script>
+
+<style scoped>
+.board {
+    margin: auto;
+    position: relative;
+}
+.gamepad {
+    min-width: 30vw;
+}
+</style>

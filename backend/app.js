@@ -214,6 +214,8 @@ app.ws('/api/game/:id/ws', function(ws, req) {
         if (data.method == "updateMatrix") {
             const matrix = data.matrix;
             const score = data.score;
+            const next = data.next;
+            const hold = data.hold;
             const player = isHost ? "host" : "guest";
             MongoClient.connect(mongoUrl, function (err, db) {
                 if (!err && ObjectId.isValid(id)) {
@@ -225,7 +227,9 @@ app.ws('/api/game/:id/ws', function(ws, req) {
                         wsGames[id][otherPlayer].send(JSON.stringify({
                             method: "updateOpponentMatrix",
                             matrix,
-                            score
+                            score,
+                            next,
+                            hold
                         }));
                     });
                 }

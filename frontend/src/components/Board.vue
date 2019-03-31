@@ -87,7 +87,6 @@ export default {
         if (init == false) {
             this.matrix = this.blendedMatrix
         }
-        this.$emit('matrix-changed', {matrix: this.matrix, score: this.score})
 
         this.currentTetromino = this.nextTetromino;
         this.nextTetromino = this.TETROMINOS[Math.floor(Math.random()*this.TETROMINOS.length)];
@@ -137,6 +136,11 @@ export default {
         setTimeout(() => {
             this.softDrop()
             this.moveDown()
+            this.$emit('matrix-changed', {
+                matrix: this.blendedMatrix,
+                score: this.score,
+                next: this.nextTetromino,
+                hold: this.holdTetromino})
         }, 1000)
     },
     moveLeft: function() {
@@ -296,8 +300,8 @@ export default {
 
 <style scoped>
 .board {
-    margin: auto;
+    /* margin: auto; */
     width: fit-content;
-    min-width: 50%;
+    /* min-width: 50%; */
 }
 </style>
