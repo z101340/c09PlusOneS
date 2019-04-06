@@ -1,0 +1,3 @@
+POST '/api/game' Create new game
+GET '/api/game/:id' Set up the game by given id, check the game is started or not
+PATCH '/api/game/:id' Join the game by given id

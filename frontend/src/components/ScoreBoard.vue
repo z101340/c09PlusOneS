@@ -1,8 +1,5 @@
 <template>
 <div class="scoreBoard">
-    <div class="score" v-bind:score="score">
-        Score: {{score}}
-    </div>
     <div class="enemyScore" v-bind:otherScore="otherScore">
         Enemy Score: {{otherScore}} 
     </div>

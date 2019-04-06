@@ -72,10 +72,10 @@ export default {
                     hold: data.hold
                 }
             } else if (data.method == "win") {
+                console.log(this.me.score)
                 this.$router.push({
                     path: "/win/" + this.id,
                     query: {
-                        score: this.me.score,
                         otherscore: this.opponent.score
                     }
                 })
@@ -115,13 +115,13 @@ export default {
             }))
         },
         die: function() {
+            console.log(this.me.score)
             this.ws.send(JSON.stringify({
                 method: "die"
             }))
             this.$router.push({
                 path: '/die/'+this.id,
                 query: {
-                    score: this.me.score,
                     otherscore: this.opponent.score
                 }
             })
