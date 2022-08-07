@@ -5,23 +5,19 @@ Tetris 101
 - Zhongyang Xia
 - Chengrong Zhang
 - Xuan (Jack) Wei
-# Live demo
-A Live demo is available HERE: [https://tetris.mechanus.io](https://tetris.mechanus.io).
-HAVE A LOOK!!! PLAY WITH YOUR FRIEND! NOW!
 
-VIDEO PRESENTATION: [CLICK HERE](https://www.youtube.com/watch?v=rCHrbzPM170&feature=youtu.be)
 # Description of the web application:
-A port of Nintendo’s Tetris 99 game on the web: allow players to play the long-existing and famous Tetris in Battle Royale mode. Only one player would survive the game!
+A port of Nintendo’s Tetris game on the web: allow players to play the long-existing and famous Tetris. Only one player would survive the game!
 Winner winner, Vodka dinner.
 
 # Description of the key features that will be completed by the Beta version:
 Basic Tetris game play (single player mode), including Tetrimino, Mino, Matrix, Lock Down, Line Clear, Hard Drop, Soft Drop, Combo, Tetris Line Clear
 
 # Description of additional features that will be complete by the Final version:
-Battle Royale Mode, where a number of players compete with each other in the elimination game until one player remains playing. Users will be assigned into arenas and compete each other lively.
+Two players compete with each other in the elimination game until one player remains playing. 
 
 # Description of the technology that we will use
-- JavaScript ES7
+- JavaScript ES6
 - Node.js
 - HTTP3/QUIC
 - TLS
